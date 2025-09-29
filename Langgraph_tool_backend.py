@@ -79,24 +79,24 @@ class ChatState(TypedDict):
 # -------------------
 # 4. Nodes
 # -------------------
-def chat_node(state: ChatState):
-    """LLM node that may answer or request a tool call."""
-    messages = state["messages"]
-    response = llm_with_tools.invoke(messages)
-    return {"messages": [response]}
-
 # def chat_node(state: ChatState):
-#     """LLM node that may answer freely as well as by request a tool call."""
+#     """LLM node that understand the human message or question then decide to answer or request a tool call."""
 #     messages = state["messages"]
-
-#     # Use the tool-aware LLM
 #     response = llm_with_tools.invoke(messages)
-
-#     # If response is just a refusal (no tool, no content), fallback to normal LLM
-#     if not response.content or "I cannot" in response.content:
-#         response = llm.invoke(messages)
-
 #     return {"messages": [response]}
+
+def chat_node(state: ChatState):
+    """LLM node that may answer freely as well as by request a tool call."""
+    messages = state["messages"]
+
+    # Use the tool-aware LLM
+    response = llm_with_tools.invoke(messages)
+
+    # If response is just a refusal (no tool, no content), fallback to normal LLM
+    if not response.content or "I cannot" in response.content:
+        response = llm.invoke(messages)
+
+    return {"messages": [response]}
 
 
 tool_node = ToolNode(tools)
